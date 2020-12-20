@@ -70,7 +70,6 @@ export const filters = {};
  * @return {Object}
  * @api private
  */
-
 function compileBody(str, options) {
   var debug_sources = {};
   debug_sources[options.filename] = str;
@@ -255,7 +254,6 @@ function handleTemplateCache(options, str) {
  * @return {Function}
  * @api public
  */
-
 export function compile(str, options) {
   var options = options || {};
 
@@ -286,7 +284,9 @@ export function compile(str, options) {
   res.dependencies = parsed.dependencies;
 
   return res;
-}/**
+}
+
+/**
  * Compile a JavaScript source representation of the given pug `str`.
  *
  * Options:
@@ -302,7 +302,6 @@ export function compile(str, options) {
  * @return {Object}
  * @api public
  */
-
 export function compileClientWithDependenciesTracked(str, options) {
   var options = options || {};
 
@@ -335,7 +334,9 @@ export function compileClientWithDependenciesTracked(str, options) {
   }
 
   return { body: body, dependencies: parsed.dependencies };
-}/**
+}
+
+/**
  * Compile a JavaScript source representation of the given pug `str`.
  *
  * Options:
@@ -350,10 +351,11 @@ export function compileClientWithDependenciesTracked(str, options) {
  * @return {String}
  * @api public
  */
-
 export function compileClient(str, options) {
   return compileClientWithDependenciesTracked(str, options).body;
-}/**
+}
+
+/**
  * Compile a `Function` representation of the given pug file.
  *
  * Options:
@@ -367,12 +369,13 @@ export function compileClient(str, options) {
  * @return {Function}
  * @api public
  */
-
 export function compileFile(path, options) {
   options = options || {};
   options.filename = path;
   return handleTemplateCache(options);
-}/**
+}
+
+/**
  * Render the given `str` of pug.
  *
  * Options:
@@ -386,7 +389,6 @@ export function compileFile(path, options) {
  * @returns {String}
  * @api public
  */
-
 export function render(str, options, fn) {
   // support callback API
   if ("function" == typeof options) {
@@ -410,7 +412,9 @@ export function render(str, options, fn) {
   }
 
   return handleTemplateCache(options, str)(options);
-}/**
+}
+
+/**
  * Render a Pug file at the given `path`.
  *
  * @param {String} path
@@ -419,7 +423,6 @@ export function render(str, options, fn) {
  * @returns {String}
  * @api public
  */
-
 export function renderFile(path, options, fn) {
   // support callback API
   if ("function" == typeof options) {
@@ -439,7 +442,9 @@ export function renderFile(path, options, fn) {
 
   options.filename = path;
   return handleTemplateCache(options)(options);
-}/**
+}
+
+/**
  * Compile a Pug file at the given `path` for use on the client.
  *
  * @param {String} path
@@ -447,7 +452,6 @@ export function renderFile(path, options, fn) {
  * @returns {String}
  * @api public
  */
-
 export function compileFileClient(path, options) {
   var key = path + ":client";
   options = options || {};

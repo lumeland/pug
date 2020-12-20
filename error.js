@@ -29,7 +29,7 @@ export default function makeError(code, message, options) {
   } else {
     fullMessage = (filename || "Pug") + ":" + location + "\n\n" + message;
   }
-  
+
   var err = new Error(fullMessage);
   err.code = "PUG:" + code;
   err.msg = message;

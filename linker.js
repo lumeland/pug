@@ -1,4 +1,4 @@
-import {assert} from "./deps.js";
+import { assert } from "./deps.js";
 import walk from "./walk.js";
 import err from "./error.js";
 

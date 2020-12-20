@@ -1,4 +1,4 @@
-import { assert, isExpression, characterParser } from "./deps.js";
+import { assert, characterParser, isExpression } from "./deps.js";
 import error from "./error.js";
 
 export default function lex(str, options) {
