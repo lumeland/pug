@@ -232,7 +232,7 @@ function handleTemplateCache(options, str) {
   if (options.cache && cache[key]) {
     return cache[key];
   } else {
-    if (str === undefined) str = fs.readFileSync(options.filename, "utf8");
+    if (str === undefined) str = Deno.readTextFileSync(options.filename);
     var templ = compile(str, options);
     if (options.cache) cache[key] = templ;
     return templ;

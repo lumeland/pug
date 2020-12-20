@@ -14,6 +14,7 @@ var pug_has_own_property = Object.prototype.hasOwnProperty;
 
 export {
   pug_attr as attr,
+  pug_attrs as attrs,
   pug_classes as classes,
   pug_escape as escape,
   pug_merge as merge,

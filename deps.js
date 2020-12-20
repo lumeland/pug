@@ -4,10 +4,10 @@ export {
   extname,
   join,
 } from "https://deno.land/std@0.80.0/path/mod.ts";
-export { default as isExpression } from "https://jspm.dev/is-expression";
-export * as characterParser from "https://cdn.jsdelivr.net/gh/ForbesLindesay/character-parser@v3.1.0/src/index.ts";
-export { default as constantinople } from "https://jspm.dev/constantinople";
-export { default as addWith } from "https://jspm.dev/with";
+export { default as isExpression } from "https://jspm.dev/is-expression@3.0.0";
+export { default as characterParser } from "https://jspm.dev/character-parser@2.1.1";
+export { default as constantinople } from "https://jspm.dev/constantinople@4.0.1";
+export { default as addWith } from "https://jspm.dev/with@7.0.0";
 
 export function stringify(obj) {
   if (obj instanceof Date) {
