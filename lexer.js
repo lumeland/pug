@@ -1,8 +1,5 @@
-import { assert } from "./deps.js";
+import { assert, isExpression, characterParser } from "./deps.js";
 import error from "./error.js";
-
-var isExpression = require("is-expression");
-var characterParser = require("character-parser");
 
 export default function lex(str, options) {
   var lexer = new Lexer(str, options);

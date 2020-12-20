@@ -1,11 +1,8 @@
 import makeError from "./error.js";
-import runtime from "./runtime.js";
+import * as runtime from "./runtime.js";
 import compileAttrs from "./attrs.js";
 import buildRuntime from "./build.js";
-import { doctypes, selfClosing, stringify } from "./deps.js";
-
-var constantinople = require("constantinople");
-var addWith = require("with");
+import { doctypes, selfClosing, stringify, constantinople, addWith } from "./deps.js";
 
 // This is used to prevent pretty printing inside certain tags
 var WHITE_SPACE_SENSITIVE_TAGS = {

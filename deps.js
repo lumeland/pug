@@ -1,5 +1,9 @@
 export { assert } from "https://deno.land/std@0.80.0/testing/asserts.ts";
-export { dirname, extname, join } from "https://deno.land/std@0.80.0/path.ts";
+export { dirname, extname, join } from "https://deno.land/std@0.80.0/path/mod.ts";
+export { default as isExpression } from "https://jspm.dev/is-expression";
+export * as characterParser from "https://cdn.jsdelivr.net/gh/ForbesLindesay/character-parser@v3.1.0/src/index.ts";
+export { default as constantinople } from "https://jspm.dev/constantinople";
+export { default as addWith } from "https://jspm.dev/with";
 
 export function stringify(obj) {
   if (obj instanceof Date) {

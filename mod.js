@@ -13,10 +13,10 @@ import lex from "./lexer.js";
 import stripComments from "./strip-comments.js";
 import parse from "./parser.js";
 import load from "./load.js";
-import filters from "./filters.js";
+import handleFilters from "./lib/handle-filters.js";
 import link from "./linker.js";
 import generateCode from "./code-gen.js";
-import runtime from "./runtime.js";
+import * as runtime from "./runtime.js";
 import runtimeWrap from "./runtime-wrap.js";
 
 /**
@@ -177,7 +177,7 @@ function compileBody(str, options) {
       filtersSet[key] = options.filters[key];
     });
   }
-  ast = filters.handleFilters(
+  ast = handleFilters(
     ast,
     filtersSet,
     options.filterOptions,

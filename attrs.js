@@ -1,8 +1,5 @@
-import { assert } from "./deps.js";
-import runtime from "./runtime.js";
-
-var constantinople = require("constantinople");
-var stringify = require("js-stringify");
+import { assert, constantinople, stringify } from "./deps.js";
+import * as runtime from "./runtime.js";
 
 function isConstant(src) {
   return constantinople(src, { pug: runtime, pug_interp: undefined });

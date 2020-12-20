@@ -1,4 +1,4 @@
-import runtime from "./runtime.js";
+import * as runtime from "./runtime.js";
 
 export default function wrap(template, templateName) {
   templateName = templateName || "template";
