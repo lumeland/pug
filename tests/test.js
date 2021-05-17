@@ -33,5 +33,7 @@ for await (const entry of Deno.readDir(dirname)) {
   );
   const result = fn({ title: "Pug" });
 
-  assertEquals(result.trim(), expected.trim());
+  Deno.test(entry.name, async () => {
+    assertEquals(result.trim(), expected.trim());
+  });
 }
