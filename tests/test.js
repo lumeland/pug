@@ -1,9 +1,5 @@
 import * as pug from "../mod.js";
-import { extname, join } from "../deps.js";
-import {
-  assert,
-  assertEquals,
-} from "https://deno.land/std@0.81.0/testing/asserts.ts";
+import { assert, assertEquals, extname, join } from "../deps.js";
 
 const dirname = join(Deno.cwd(), "/tests/cases");
 

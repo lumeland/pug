@@ -1,9 +1,12 @@
-export { assert } from "https://deno.land/std@0.80.0/testing/asserts.ts";
+export {
+  assert,
+  assertEquals,
+} from "https://deno.land/std@0.97.0/testing/asserts.ts";
 export {
   dirname,
   extname,
   join,
-} from "https://deno.land/std@0.80.0/path/mod.ts";
+} from "https://deno.land/std@0.97.0/path/mod.ts";
 export { default as isExpression } from "https://jspm.dev/is-expression@3.0.0";
 export { default as characterParser } from "https://jspm.dev/character-parser@2.1.1";
 export { default as constantinople } from "https://jspm.dev/constantinople@4.0.1";
