@@ -1,7 +1,6 @@
 # Pug Deno
 
-[Pug library](https://pugjs.org/) ported to Deno, to use in
-[lume](https://lumeland.github.io/)
+[Pug library](https://pugjs.org/) ported to Deno 🦕.
 
 ---
 
@@ -68,7 +67,7 @@ import {
   Options,
   render,
   renderFile,
-} from "https://raw.githubusercontent.com/lumeland/pug/master/mod.ts";
+} from "https://cdn.jsdelivr.net/gh/lumeland/pug@master/mod.ts";
 
 // compile
 const fn = compile("h1#title Pug - node template engine #{state}");
