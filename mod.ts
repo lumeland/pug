@@ -1,3 +1,6 @@
+// deno-lint-ignore-file no-explicit-any
+// Allow any as long as not all types are defined
+
 /*!
  * Pug
  * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
@@ -20,6 +23,48 @@ import * as runtime from "./runtime.js";
 import runtimeWrap from "./runtime-wrap.js";
 
 /**
+ * Types, interfaces, enums, etc
+ */
+
+import type {
+  LexerOptions,
+  Options,
+  ParserOptions,
+  Plugin,
+  PluginType,
+  Cache,
+  Callback,
+  DebugSources,
+  Token,
+  PluginFunction,
+  PluginFunctionOptions,
+  PluginResolve,
+  CompileTemplate,
+  Filter,
+  LocalsObject,
+} from './types/index.ts';
+
+
+// Export types
+export type {
+  LexerOptions,
+  Options,
+  ParserOptions,
+  Plugin,
+  PluginType,
+  Cache,
+  Callback,
+  DebugSources,
+  Token,
+  PluginFunction,
+  PluginFunctionOptions,
+  PluginResolve,
+  CompileTemplate,
+  Filter,
+  LocalsObject,
+}
+
+/**
  * Name for detection
  */
 
@@ -35,23 +80,23 @@ export { runtime };
  * Template function cache.
  */
 
-export const cache = {};
+export const cache: Cache = {};
 
-function applyPlugins(value, options, plugins, name) {
+function applyPlugins(value: any, options: any, plugins: Plugin[], name: PluginType) {
   return plugins.reduce(function (value, plugin) {
-    return plugin[name] ? plugin[name](value, options) : value;
+    return typeof plugin[name] === 'function' ? (plugin[name] as PluginFunction)(value, options) : value;
   }, value);
 }
 
-function findReplacementFunc(plugins, name) {
-  var eligiblePlugins = plugins.filter(function (plugin) {
-    return plugin[name];
+function findReplacementFunc(plugins: Plugin[], name: PluginType): any {
+  const eligiblePlugins = plugins.filter(function (plugin) {
+    return plugin[name] as PluginFunction;
   });
 
   if (eligiblePlugins.length > 1) {
     throw new Error("Two or more plugins all implement " + name + " method.");
   } else if (eligiblePlugins.length) {
-    return eligiblePlugins[0][name].bind(eligiblePlugins[0]);
+    return (eligiblePlugins[0][name] as PluginFunction).bind(eligiblePlugins[0]);
   }
   return null;
 }
@@ -60,7 +105,7 @@ function findReplacementFunc(plugins, name) {
  * Object for global custom filters.  Note that you can also just pass a `filters`
  * option to any other method.
  */
-export const filters = {};
+export const filters: Record<string, Filter> = {};
 
 /**
  * Compile the given `str` of pug and return a function body.
@@ -70,27 +115,32 @@ export const filters = {};
  * @return {Object}
  * @api private
  */
-function compileBody(str, options) {
-  var debug_sources = {};
-  debug_sources[options.filename] = str;
-  var dependencies = [];
-  var plugins = options.plugins || [];
-  var ast = load.string(str, {
+function compileBody(str: string, options: Options) {
+  if (!options.filename) {
+    throw new Error("Filename not set!");
+  }
+  const debugSources: DebugSources = {};
+  debugSources[options.filename] = str;
+  const dependencies: string[] = [];
+  const plugins = options.plugins || [];
+  let ast = load.string(str, {
     filename: options.filename,
     basedir: options.basedir,
-    lex: function (str, options) {
-      var lexOptions = {};
+    lex: function (str: string, options: PluginFunctionOptions) {
+      const lexOptions: LexerOptions = {
+        plugins: []
+      };
       Object.keys(options).forEach(function (key) {
-        lexOptions[key] = options[key];
+        (lexOptions as any)[key] = (options as any)[key];
       });
-      lexOptions.plugins = plugins
+      lexOptions.plugins.push(...plugins
         .filter(function (plugin) {
           return !!plugin.lex;
         })
         .map(function (plugin) {
-          return plugin.lex;
-        });
-      var contents = applyPlugins(
+          return plugin.lex as PluginFunction;
+        }));
+      const contents = applyPlugins(
         str,
         { filename: options.filename },
         plugins,
@@ -103,7 +153,7 @@ function compileBody(str, options) {
         "postLex",
       );
     },
-    parse: function (tokens, options) {
+    parse: function (tokens: Token[], options: ParserOptions) {
       tokens = tokens.map(function (token) {
         if (token.type === "path" && extname(token.val) === "") {
           return {
@@ -116,17 +166,19 @@ function compileBody(str, options) {
       });
       tokens = stripComments(tokens, options);
       tokens = applyPlugins(tokens, options, plugins, "preParse");
-      var parseOptions = {};
+      const parseOptions: ParserOptions = {
+        plugins: [],
+      };
       Object.keys(options).forEach(function (key) {
-        parseOptions[key] = options[key];
+        (parseOptions as any)[key] = (options as any)[key];
       });
-      parseOptions.plugins = plugins
+      parseOptions.plugins.push(...plugins
         .filter(function (plugin) {
           return !!plugin.parse;
         })
         .map(function (plugin) {
-          return plugin.parse;
-        });
+          return plugin.parse as PluginFunction;
+        }));
 
       return applyPlugins(
         applyPlugins(
@@ -140,40 +192,42 @@ function compileBody(str, options) {
         "preLoad",
       );
     },
-    resolve: function (filename, source, loadOptions) {
-      var replacementFunc = findReplacementFunc(plugins, "resolve");
+    resolve: function (filename: string, source: string, loadOptions: PluginFunctionOptions) {
+      const replacementFunc = findReplacementFunc(plugins, "resolve") as PluginResolve | null;
       if (replacementFunc) {
         return replacementFunc(filename, source, options);
       }
 
       return load.resolve(filename, source, loadOptions);
     },
-    read: function (filename, loadOptions) {
+    read: function (filename: string, loadOptions: PluginFunctionOptions) {
       dependencies.push(filename);
 
-      var contents;
+      let contents: string;
 
-      var replacementFunc = findReplacementFunc(plugins, "read");
+      const replacementFunc = findReplacementFunc(plugins, "read");
       if (replacementFunc) {
-        contents = replacementFunc(filename, options);
+        contents = replacementFunc(filename, options) as string;
       } else {
         contents = load.read(filename, loadOptions);
       }
 
-      debug_sources[filename] = contents;
+      debugSources[filename] = contents;
       return contents;
     },
   });
   ast = applyPlugins(ast, options, plugins, "postLoad");
   ast = applyPlugins(ast, options, plugins, "preFilters");
 
-  var filtersSet = {};
+  const filtersSet: Record<string, Filter> = {};
   Object.keys(filters).forEach(function (key) {
     filtersSet[key] = filters[key];
   });
   if (options.filters) {
     Object.keys(options.filters).forEach(function (key) {
-      filtersSet[key] = options.filters[key];
+      if (options.filters) {
+        filtersSet[key] = options.filters[key];
+      }
     });
   }
   ast = handleFilters(
@@ -190,23 +244,23 @@ function compileBody(str, options) {
 
   // Compile
   ast = applyPlugins(ast, options, plugins, "preCodeGen");
-  var js = (findReplacementFunc(plugins, "generateCode") || generateCode)(ast, {
+  let js = (findReplacementFunc(plugins, "generateCode") || generateCode)(ast, {
     pretty: options.pretty,
     compileDebug: options.compileDebug,
     doctype: options.doctype,
     inlineRuntimeFunctions: options.inlineRuntimeFunctions,
     globals: options.globals,
     self: options.self,
-    includeSources: options.includeSources ? debug_sources : false,
+    includeSources: options.includeSources ? debugSources : false,
     templateName: options.templateName,
-  });
+  }) as string;
   js = applyPlugins(js, options, plugins, "postCodeGen");
 
   // Debug compiler
   if (options.debug) {
     console.error(
       "\nCompiled Function:\n\n\u001b[90m%s\u001b[0m",
-      js.replace(/^/gm, "  "),
+      js?.replace(/^/gm, "  "),
     );
   }
 
@@ -227,13 +281,16 @@ function compileBody(str, options) {
  * @return {Function}
  * @api private
  */
-function handleTemplateCache(options, str) {
-  var key = options.filename;
+function handleTemplateCache(options: Options, str?: string): CompileTemplate {
+  if (!options.filename) {
+    throw new Error("Filename not set!");
+  }
+  const key = options.filename;
   if (options.cache && cache[key]) {
-    return cache[key];
+    return cache[key] as CompileTemplate;
   } else {
     if (str === undefined) str = Deno.readTextFileSync(options.filename);
-    var templ = compile(str, options);
+    const templ = compile(str, options);
     if (options.cache) cache[key] = templ;
     return templ;
   }
@@ -254,12 +311,10 @@ function handleTemplateCache(options, str) {
  * @return {Function}
  * @api public
  */
-export function compile(str, options) {
-  var options = options || {};
-
+export function compile(str: string, options: Options = {}) {
   str = String(str);
 
-  var parsed = compileBody(str, {
+  const parsed = compileBody(str, {
     compileDebug: options.compileDebug !== false,
     filename: options.filename,
     basedir: options.basedir,
@@ -277,11 +332,11 @@ export function compile(str, options) {
     plugins: options.plugins,
   });
 
-  var res = options.inlineRuntimeFunctions
+  const res: CompileTemplate = options.inlineRuntimeFunctions
     ? new Function("", parsed.body + ";return template;")()
     : runtimeWrap(parsed.body);
 
-  res.dependencies = parsed.dependencies;
+  (res as any).dependencies = parsed.dependencies;
 
   return res;
 }
@@ -302,11 +357,9 @@ export function compile(str, options) {
  * @return {Object}
  * @api public
  */
-export function compileClientWithDependenciesTracked(str, options) {
-  var options = options || {};
-
+export function compileClientWithDependenciesTracked(str: string, options: Options = {}) {
   str = String(str);
-  var parsed = compileBody(str, {
+  const parsed = compileBody(str, {
     compileDebug: options.compileDebug,
     filename: options.filename,
     basedir: options.basedir,
@@ -324,11 +377,11 @@ export function compileClientWithDependenciesTracked(str, options) {
     plugins: options.plugins,
   });
 
-  var body = parsed.body;
+  let body = parsed.body;
 
   if (options.module) {
     if (options.inlineRuntimeFunctions === false) {
-      body = 'var pug = require("pug-runtime");' + body;
+      body = 'const pug = require("pug-runtime");' + body;
     }
     body += " module.exports = " + (options.name || "template") + ";";
   }
@@ -351,7 +404,7 @@ export function compileClientWithDependenciesTracked(str, options) {
  * @return {String}
  * @api public
  */
-export function compileClient(str, options) {
+export function compileClient(str: string, options: Options) {
   return compileClientWithDependenciesTracked(str, options).body;
 }
 
@@ -369,7 +422,7 @@ export function compileClient(str, options) {
  * @return {Function}
  * @api public
  */
-export function compileFile(path, options) {
+export function compileFile(path: string, options: Options) {
   options = options || {};
   options.filename = path;
   return handleTemplateCache(options);
@@ -389,15 +442,16 @@ export function compileFile(path, options) {
  * @returns {String}
  * @api public
  */
-export function render(str, options, fn) {
+
+export function render(str: string, options?: (Options & LocalsObject) | Callback, fn?: Callback<Error,string>): string | void {
   // support callback API
   if ("function" == typeof options) {
     (fn = options), (options = undefined);
   }
   if (typeof fn === "function") {
-    var res;
+    let res: string;
     try {
-      res = render(str, options);
+      res = render(str, options) as string;
     } catch (ex) {
       return fn(ex);
     }
@@ -423,15 +477,15 @@ export function render(str, options, fn) {
  * @returns {String}
  * @api public
  */
-export function renderFile(path, options, fn) {
+export function renderFile(path: string, options?: (Options & LocalsObject) | Callback, fn?: Callback): string | void {
   // support callback API
   if ("function" == typeof options) {
     (fn = options), (options = undefined);
   }
   if (typeof fn === "function") {
-    var res;
+    let res: string;
     try {
-      res = renderFile(path, options);
+      res = renderFile(path, options) as string;
     } catch (ex) {
       return fn(ex);
     }
@@ -452,18 +506,20 @@ export function renderFile(path, options, fn) {
  * @returns {String}
  * @api public
  */
-export function compileFileClient(path, options) {
-  var key = path + ":client";
+export function compileFileClient(path: string, options: Options): string {
+  const key = path + ":client";
   options = options || {};
 
   options.filename = path;
 
   if (options.cache && cache[key]) {
-    return cache[key];
+    return cache[key] as string;
   }
 
-  var str = fs.readFileSync(options.filename, "utf8");
-  var out = compileClient(str, options);
+  const decoder = new TextDecoder("utf-8");
+  const data = Deno.readFileSync(options.filename);
+  const str = decoder.decode(data);
+  const out = compileClient(str, options);
   if (options.cache) cache[key] = out;
   return out;
 }
