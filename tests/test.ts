@@ -1,4 +1,4 @@
-import * as pug from "../mod.js";
+import * as pug from "../mod.ts";
 import { assert, assertEquals, extname, join } from "../deps.js";
 
 const dirname = join(Deno.cwd(), "/tests/cases");
@@ -29,7 +29,7 @@ for await (const entry of Deno.readDir(dirname)) {
   );
   const result = fn({ title: "Pug" });
 
-  Deno.test(entry.name, async () => {
+  Deno.test(entry.name, () => {
     assertEquals(result.trim(), expected.trim());
   });
 }
