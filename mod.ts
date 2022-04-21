@@ -282,9 +282,6 @@ function compileBody(str: string, options: Options) {
  * @api private
  */
 function handleTemplateCache(options: Options, str?: string): CompileTemplate {
-  if (!options.filename) {
-    throw new Error("Filename not set!");
-  }
   const key = options.filename;
   if (options.cache && cache[key]) {
     return cache[key] as CompileTemplate;
