@@ -117,7 +117,7 @@ export const filters: Record<string, Filter> = {};
  */
 function compileBody(str: string, options: Options) {
   const debugSources: DebugSources = {};
-  debugSources[options.filename] = str;
+  debugSources[options.filename!] = str;
   const dependencies: string[] = [];
   const plugins = options.plugins || [];
   let ast = load.string(str, {
@@ -279,11 +279,11 @@ function compileBody(str: string, options: Options) {
  * @api private
  */
 function handleTemplateCache(options: Options, str?: string): CompileTemplate {
-  const key = options.filename;
+  const key = options.filename!;
   if (options.cache && cache[key]) {
     return cache[key] as CompileTemplate;
   } else {
-    if (str === undefined) str = Deno.readTextFileSync(options.filename);
+    if (str === undefined) str = Deno.readTextFileSync(key);
     const templ = compile(str, options);
     if (options.cache) cache[key] = templ;
     return templ;
