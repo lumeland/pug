@@ -116,9 +116,6 @@ export const filters: Record<string, Filter> = {};
  * @api private
  */
 function compileBody(str: string, options: Options) {
-  if (!options.filename) {
-    throw new Error("Filename not set!");
-  }
   const debugSources: DebugSources = {};
   debugSources[options.filename] = str;
   const dependencies: string[] = [];
