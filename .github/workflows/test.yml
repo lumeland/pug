@@ -21,4 +21,4 @@ jobs:
         with:
           deno-version: ${{ matrix.deno }}
       - name: Test Deno
-        run: deno test --allow-read
+        run: deno test --allow-read --no-check=remote
