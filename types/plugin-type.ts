@@ -1,20 +1,19 @@
-export type PluginType = 
-      'lex'
-    | 'parse'
-    | 'preParse'
-    | 'postParse'
-    | 'preLex'
-    | 'postLex'
-    | 'preLex'
-    | 'preLoad'
-    | 'generateCode'
-    | 'postFilters'
-    | 'preLink'
-    | 'postLink'
-    | 'preCodeGen'
-    | 'postCodeGen'
-    | 'read'
-    | 'resolve'
-    | 'postLoad'
-    | 'preFilters'
-    ;
+export type PluginType =
+  | "lex"
+  | "parse"
+  | "preParse"
+  | "postParse"
+  | "preLex"
+  | "postLex"
+  | "preLex"
+  | "preLoad"
+  | "generateCode"
+  | "postFilters"
+  | "preLink"
+  | "postLink"
+  | "preCodeGen"
+  | "postCodeGen"
+  | "read"
+  | "resolve"
+  | "postLoad"
+  | "preFilters";

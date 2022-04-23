@@ -27,42 +27,41 @@ import runtimeWrap from "./runtime-wrap.js";
  */
 
 import type {
+  Cache,
+  Callback,
+  CompileTemplate,
+  DebugSources,
+  Filter,
   LexerOptions,
+  LocalsObject,
   Options,
   ParserOptions,
   Plugin,
-  PluginType,
-  Cache,
-  Callback,
-  DebugSources,
-  Token,
   PluginFunction,
   PluginFunctionOptions,
   PluginResolve,
-  CompileTemplate,
-  Filter,
-  LocalsObject,
-} from './types/index.ts';
-
+  PluginType,
+  Token,
+} from "./types/index.ts";
 
 // Export types
 export type {
+  Cache,
+  Callback,
+  CompileTemplate,
+  DebugSources,
+  Filter,
   LexerOptions,
+  LocalsObject,
   Options,
   ParserOptions,
   Plugin,
-  PluginType,
-  Cache,
-  Callback,
-  DebugSources,
-  Token,
   PluginFunction,
   PluginFunctionOptions,
   PluginResolve,
-  CompileTemplate,
-  Filter,
-  LocalsObject,
-}
+  PluginType,
+  Token,
+};
 
 /**
  * Name for detection
@@ -82,9 +81,16 @@ export { runtime };
 
 export const cache: Cache = {};
 
-function applyPlugins(value: any, options: any, plugins: Plugin[], name: PluginType) {
+function applyPlugins(
+  value: any,
+  options: any,
+  plugins: Plugin[],
+  name: PluginType,
+) {
   return plugins.reduce(function (value, plugin) {
-    return typeof plugin[name] === 'function' ? (plugin[name] as PluginFunction)(value, options) : value;
+    return typeof plugin[name] === "function"
+      ? (plugin[name] as PluginFunction)(value, options)
+      : value;
   }, value);
 }
 
@@ -96,7 +102,9 @@ function findReplacementFunc(plugins: Plugin[], name: PluginType): any {
   if (eligiblePlugins.length > 1) {
     throw new Error("Two or more plugins all implement " + name + " method.");
   } else if (eligiblePlugins.length) {
-    return (eligiblePlugins[0][name] as PluginFunction).bind(eligiblePlugins[0]);
+    return (eligiblePlugins[0][name] as PluginFunction).bind(
+      eligiblePlugins[0],
+    );
   }
   return null;
 }
@@ -125,18 +133,20 @@ function compileBody(str: string, options: Options) {
     basedir: options.basedir,
     lex: function (str: string, options: PluginFunctionOptions) {
       const lexOptions: LexerOptions = {
-        plugins: []
+        plugins: [],
       };
       Object.keys(options).forEach(function (key) {
         (lexOptions as any)[key] = (options as any)[key];
       });
-      lexOptions.plugins.push(...plugins
-        .filter(function (plugin) {
-          return !!plugin.lex;
-        })
-        .map(function (plugin) {
-          return plugin.lex as PluginFunction;
-        }));
+      lexOptions.plugins.push(
+        ...plugins
+          .filter(function (plugin) {
+            return !!plugin.lex;
+          })
+          .map(function (plugin) {
+            return plugin.lex as PluginFunction;
+          }),
+      );
       const contents = applyPlugins(
         str,
         { filename: options.filename },
@@ -169,13 +179,15 @@ function compileBody(str: string, options: Options) {
       Object.keys(options).forEach(function (key) {
         (parseOptions as any)[key] = (options as any)[key];
       });
-      parseOptions.plugins.push(...plugins
-        .filter(function (plugin) {
-          return !!plugin.parse;
-        })
-        .map(function (plugin) {
-          return plugin.parse as PluginFunction;
-        }));
+      parseOptions.plugins.push(
+        ...plugins
+          .filter(function (plugin) {
+            return !!plugin.parse;
+          })
+          .map(function (plugin) {
+            return plugin.parse as PluginFunction;
+          }),
+      );
 
       return applyPlugins(
         applyPlugins(
@@ -189,8 +201,14 @@ function compileBody(str: string, options: Options) {
         "preLoad",
       );
     },
-    resolve: function (filename: string, source: string, loadOptions: PluginFunctionOptions) {
-      const replacementFunc = findReplacementFunc(plugins, "resolve") as PluginResolve | null;
+    resolve: function (
+      filename: string,
+      source: string,
+      loadOptions: PluginFunctionOptions,
+    ) {
+      const replacementFunc = findReplacementFunc(plugins, "resolve") as
+        | PluginResolve
+        | null;
       if (replacementFunc) {
         return replacementFunc(filename, source, options);
       }
@@ -351,7 +369,10 @@ export function compile(str: string, options: Options = {}) {
  * @return {Object}
  * @api public
  */
-export function compileClientWithDependenciesTracked(str: string, options: Options = {}) {
+export function compileClientWithDependenciesTracked(
+  str: string,
+  options: Options = {},
+) {
   str = String(str);
   const parsed = compileBody(str, {
     compileDebug: options.compileDebug,
@@ -437,7 +458,11 @@ export function compileFile(path: string, options: Options) {
  * @api public
  */
 
-export function render(str: string, options?: (Options & LocalsObject) | Callback, fn?: Callback<Error,string>): string | void {
+export function render(
+  str: string,
+  options?: (Options & LocalsObject) | Callback,
+  fn?: Callback<Error, string>,
+): string | void {
   // support callback API
   if ("function" == typeof options) {
     (fn = options), (options = undefined);
@@ -471,7 +496,11 @@ export function render(str: string, options?: (Options & LocalsObject) | Callbac
  * @returns {String}
  * @api public
  */
-export function renderFile(path: string, options?: (Options & LocalsObject) | Callback, fn?: Callback): string | void {
+export function renderFile(
+  path: string,
+  options?: (Options & LocalsObject) | Callback,
+  fn?: Callback,
+): string | void {
   // support callback API
   if ("function" == typeof options) {
     (fn = options), (options = undefined);

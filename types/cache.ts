@@ -1,5 +1,5 @@
-import { CompileTemplate } from './compile-template.ts'
+import { CompileTemplate } from "./compile-template.ts";
 
 export interface Cache {
-    [key: string]: string | CompileTemplate;
+  [key: string]: string | CompileTemplate;
 }

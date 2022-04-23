@@ -1,5 +1,5 @@
 export interface Token {
-    type: string;
-    val: string;
-    loc: string;
+  type: string;
+  val: string;
+  loc: string;
 }

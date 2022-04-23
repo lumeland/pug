@@ -1,3 +1,3 @@
 export interface PluginFunctionOptions {
-    filename: string;
+  filename: string;
 }

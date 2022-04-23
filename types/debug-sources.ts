@@ -1,3 +1,3 @@
 export interface DebugSources {
-    [key: string]: string;
+  [key: string]: string;
 }

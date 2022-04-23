@@ -1,16 +1,16 @@
 export {
   assert,
   assertEquals,
-} from "https://deno.land/std@0.97.0/testing/asserts.ts";
+} from "https://deno.land/std@0.136.0/testing/asserts.ts";
 export {
   dirname,
   extname,
   join,
-} from "https://deno.land/std@0.97.0/path/mod.ts";
-export { default as isExpression } from "https://jspm.dev/is-expression@3.0.0";
-export { default as characterParser } from "https://jspm.dev/character-parser@2.1.1";
-export { default as constantinople } from "https://jspm.dev/constantinople@4.0.1";
-export { default as addWith } from "https://jspm.dev/with@7.0.0";
+} from "https://deno.land/std@0.136.0/path/mod.ts";
+export { default as isExpression } from "https://esm.sh/is-expression@4.0.0";
+export * as characterParser from "https://esm.sh/character-parser@4.0.0";
+export { default as constantinople } from "https://esm.sh/constantinople@4.0.1";
+export { default as addWith } from "https://esm.sh/with@7.0.2";
 
 export function stringify(obj) {
   if (obj instanceof Date) {
